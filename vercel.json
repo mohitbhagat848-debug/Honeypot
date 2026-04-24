@@ -16,6 +16,7 @@
     { "source": "/trap/(.*)", "destination": "/api/index.js" },
     { "source": "/trap", "destination": "/api/index.js" },
     { "source": "/assets/(.*)", "destination": "/client/assets/$1" },
+    { "source": "/favicon.svg", "destination": "/client/favicon.svg" },
     { "source": "/((?!api|trap|assets).*)", "destination": "/client/index.html" }
   ]
 }
