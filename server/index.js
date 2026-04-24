@@ -120,13 +120,22 @@ async function main() {
     res.status(500).json({ error: "Server error" });
   });
 
-  server.listen(PORT, () => {
-    console.log(`API + honeypot listening on http://localhost:${PORT}`);
-    console.log(`Trap UI: http://localhost:${PORT}/trap`);
-  });
+  if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+    server.listen(PORT, () => {
+      console.log(`API + honeypot listening on http://localhost:${PORT}`);
+      console.log(`Trap UI: http://localhost:${PORT}/trap`);
+    });
+  }
+
+  return app;
 }
 
-main().catch((e) => {
+const appPromise = main().catch((e) => {
   console.error(e);
   process.exit(1);
 });
+
+module.exports = async (req, res) => {
+  const app = await appPromise;
+  app(req, res);
+};
