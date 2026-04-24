@@ -15,6 +15,6 @@
     { "source": "/api/:path*", "destination": "/server/index.js" },
     { "source": "/trap/:path*", "destination": "/server/index.js" },
     { "source": "/trap", "destination": "/server/index.js" },
-    { "source": "/(.*)", "destination": "/client/$1" }
+    { "source": "/((?!api|trap).*)" , "destination": "/client/index.html" }
   ]
 }
