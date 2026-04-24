@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/index.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     },
     {
@@ -12,11 +12,10 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/server/index.js" },
-    { "source": "/trap/:path*", "destination": "/server/index.js" },
-    { "source": "/trap", "destination": "/server/index.js" },
+    { "source": "/api/:path*", "destination": "/api/index.js" },
+    { "source": "/trap/:path*", "destination": "/api/index.js" },
+    { "source": "/trap", "destination": "/api/index.js" },
     { "source": "/assets/:path*", "destination": "/client/assets/:path*" },
-    { "source": "/favicon.svg", "destination": "/client/favicon.svg" },
     { "source": "/((?!api|trap|assets).*)", "destination": "/client/index.html" }
   ]
 }

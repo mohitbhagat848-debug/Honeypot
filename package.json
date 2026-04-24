@@ -4,7 +4,6 @@
   "private": true,
   "description": "Full-stack real-time honeypot network analyzer for defensive security research",
   "scripts": {
-    "postinstall": "npm install --prefix server && npm install --prefix client",
     "predev": "kill-port 5000 5173 5174 5175 5176 || exit 0",
     "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix client",
