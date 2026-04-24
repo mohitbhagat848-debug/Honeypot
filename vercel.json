@@ -12,10 +12,10 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "api/index.js" },
-    { "source": "/trap/(.*)", "destination": "api/index.js" },
-    { "source": "/trap", "destination": "api/index.js" },
-    { "source": "/assets/(.*)", "destination": "client/assets/$1" },
-    { "source": "/((?!api|trap|assets).*)", "destination": "client/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/trap/(.*)", "destination": "/api/index.js" },
+    { "source": "/trap", "destination": "/api/index.js" },
+    { "source": "/assets/(.*)", "destination": "/client/assets/$1" },
+    { "source": "/((?!api|trap|assets).*)", "destination": "/client/index.html" }
   ]
 }

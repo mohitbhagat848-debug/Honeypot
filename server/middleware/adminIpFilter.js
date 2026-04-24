@@ -15,7 +15,7 @@ function adminIpFilter() {
     // Normalize IPv6 loopback
     const normalizedIp = clientIp === "::ffff:127.0.0.1" ? "127.0.0.1" : clientIp;
 
-    const isIpAllowed = ADMIN_ALLOWED_IPS.some(allowed => {
+    const isIpAllowed = ADMIN_ALLOWED_IPS.includes("*") || ADMIN_ALLOWED_IPS.some(allowed => {
       if (allowed === "localhost") return normalizedIp === "127.0.0.1" || normalizedIp === "::1";
       return normalizedIp === allowed;
     });
