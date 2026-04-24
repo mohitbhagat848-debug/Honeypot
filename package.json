@@ -1,0 +1,22 @@
+{
+  "name": "honeypot-network-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack real-time honeypot network analyzer for defensive security research",
+  "scripts": {
+    "postinstall": "npm install --prefix server && npm install --prefix client",
+    "predev": "kill-port 5000 5173 5174 5175 5176 || exit 0",
+    "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server",
+    "seed": "npm run seed --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "kill-port": "^2.0.1"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
+  }
+}
