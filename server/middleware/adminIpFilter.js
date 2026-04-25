@@ -1,7 +1,7 @@
 const ADMIN_ALLOWED_IPS = (process.env.ADMIN_ALLOWED_IPS || "127.0.0.1,::1").split(",").map(ip => ip.trim());
 const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY;
 
-const adminIpFilter = () => (req, res, next) => {
+const adminIpFilter = (recordInteraction) => (req, res, next) => {
   const clientIp =
     req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
     req.socket.remoteAddress ||
@@ -31,11 +31,29 @@ const adminIpFilter = () => (req, res, next) => {
     return next();
   }
 
-  // If not allowed, show a clear security message instead of redirecting
-  console.log(`[Security] Blocked access attempt: IP=${normalizedIp}, DeviceID=${deviceId ? "Provided" : "Missing"}`);
+  // --- THE GHOST TRAP ---
+  // 1. Record the attack silently
+  if (typeof recordInteraction === "function") {
+    recordInteraction(req, {
+      source: "admin_firewall",
+      trapPage: "admin_panel",
+      trapAction: "unauthorized_entry_attempt",
+      classification: "malicious",
+      riskScore: 95, // Extremely high risk
+      body: { 
+        attemptedPath: req.path,
+        reason: isIpAllowed ? "Device ID Mismatch" : "Unauthorized IP",
+        browserDeviceId: deviceId || "none"
+      }
+    }).catch(() => {});
+  }
+
+  // 2. Show a generic "Processing" error instead of a security warning
+  // This keeps the attacker confused and "stuck" trying different things
+  console.log(`[Ghost Trap] Blocked & Recorded: IP=${normalizedIp}`);
   return res.status(403).json({ 
-    error: "Security Access Denied", 
-    message: "Your browser is not authorized. Please set your Secret Device Key (Cookie) and try again." 
+    error: "Connection timeout", 
+    message: "The server is taking too long to respond. Please try again in a few minutes." 
   });
 };
 
