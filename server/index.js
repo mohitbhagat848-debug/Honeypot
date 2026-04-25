@@ -82,12 +82,12 @@ async function main() {
     });
   });
 
-  app.use("/api/auth", authRoutes);
-  app.use("/api/logs", logsRoutes);
-  app.use("/api/stats", statsRoutes);
-  app.use("/api/blocklist", blocklistRoutes);
-  app.use("/api/export", exportRoutes);
-  app.use("/api/replay", replayRoutes);
+  app.use("/api/auth", adminIpFilter(), authRoutes);
+  app.use("/api/logs", adminIpFilter(), logsRoutes);
+  app.use("/api/stats", adminIpFilter(), statsRoutes);
+  app.use("/api/blocklist", adminIpFilter(), blocklistRoutes);
+  app.use("/api/export", adminIpFilter(), exportRoutes);
+  app.use("/api/replay", adminIpFilter(), replayRoutes);
   app.use("/api/external", externalRoutes); 
 
   app.use(
