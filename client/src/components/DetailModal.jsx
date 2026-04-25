@@ -339,8 +339,8 @@ export default function DetailModal({ log, onClose, onBlocked }) {
                     center={[L.lat, L.lon]}
                     zoom={12}
                     className="h-full w-full"
-                    scrollWheelZoom={false}
-                    zoomControl={false}
+                    scrollWheelZoom={true}
+                    zoomControl={true}
                     dragging={true}
                   >
                     <TileLayer
