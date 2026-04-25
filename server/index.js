@@ -30,7 +30,9 @@ async function main() {
     console.warn("Warning: set a strong JWT_SECRET in .env (16+ chars)");
   }
 
-  await mongoose.connect(MONGO_URI);
+  await mongoose.connect(MONGO_URI, {
+    serverSelectionTimeoutMS: 5000, // 5 second timeout
+  });
   console.log("MongoDB connected");
   await refreshCache().catch(() => {});
 
@@ -103,8 +105,10 @@ async function main() {
 
   // Catch-all for React Routing
   app.get("*", (req, res, next) => {
-    // If it's an API call that wasn't caught, return 404
-    if (req.path.startsWith("/api/")) return next();
+    // If it's an API call that wasn't caught, return a JSON 404
+    if (req.path.startsWith("/api/")) {
+      return res.status(404).json({ error: "API Route Not Found" });
+    }
     
     // Otherwise, serve the React index.html
     res.sendFile(path.join(clientDistPath, "index.html"), (err) => {
