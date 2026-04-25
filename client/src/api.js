@@ -8,6 +8,14 @@ async function request(path, opts = {}) {
   const headers = { ...opts.headers };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
+  
+  // Cross-domain cookie support: Send device ID as a header
+  const deviceId = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("x-admin-device-id="))
+    ?.split("=")[1];
+  if (deviceId) headers["X-Admin-Device-ID"] = deviceId;
+
   if (opts.body && typeof opts.body === "object" && !(opts.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
     opts.body = JSON.stringify(opts.body);

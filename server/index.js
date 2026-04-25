@@ -72,6 +72,7 @@ async function main() {
     cors({
       origin: process.env.CLIENT_ORIGIN?.split(",") || ["http://localhost:5173"],
       credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization", "X-Admin-Device-ID"],
     })
   );
   app.use(express.json({ limit: "256kb" }));

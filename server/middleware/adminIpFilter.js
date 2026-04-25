@@ -19,7 +19,9 @@ const adminIpFilter = () => (req, res, next) => {
   const cookieHeader = req.headers.cookie || "";
   const cookies = cookieHeader.split(";").map(c => c.trim());
   const deviceIdCookie = cookies.find(c => c.startsWith("x-admin-device-id="));
-  const deviceId = deviceIdCookie ? deviceIdCookie.split("=")[1] : undefined;
+  
+  // Support both Cookie and Header for cross-domain compatibility
+  const deviceId = (deviceIdCookie ? deviceIdCookie.split("=")[1] : undefined) || req.headers["x-admin-device-id"];
 
   const isDeviceAllowed = !ADMIN_SECRET_KEY || deviceId === ADMIN_SECRET_KEY;
 
