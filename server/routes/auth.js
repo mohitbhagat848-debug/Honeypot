@@ -69,20 +69,8 @@ function createAuthRouter({ recordInteraction } = {}) {
     }
   });
 
-  router.get("/setup-key", (req, res) => {
-    const { key } = req.query;
-    if (!key) return res.status(400).send("Missing key parameter");
-    
-    // Set the cookie for 1 year
-    res.cookie("x-admin-device-id", key, {
-      maxAge: 365 * 24 * 60 * 60 * 1000,
-      path: "/",
-      httpOnly: false, // Must be accessible for the filter logic we have
-      secure: true,
-      sameSite: "Lax"
-    });
-    
-    res.send(`<h1>Security Key Set!</h1><p>Your browser is now authorized with key: <b>${key}</b></p><a href="/login">Go to Login</a>`);
+  router.get("/me", authMiddleware, async (req, res) => {
+    return res.json({ user: { email: req.user.email, role: req.user.role } });
   });
 
   return router;

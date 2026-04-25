@@ -12,7 +12,7 @@ async function request(path, opts = {}) {
     headers["Content-Type"] = "application/json";
     opts.body = JSON.stringify(opts.body);
   }
-  const res = await fetch(`${base}${path}`, { ...opts, headers });
+  const res = await fetch(`${base}${path}`, { ...opts, headers, credentials: "include" });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || res.statusText);
@@ -42,6 +42,7 @@ export const api = {
     const token = getToken();
     const res = await fetch(`${base}/api/export/csv`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",
     });
     if (!res.ok) throw new Error("Export failed");
     const blob = await res.blob();
