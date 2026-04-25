@@ -57,6 +57,26 @@ export default function DetailModal({ log, onClose, onBlocked }) {
   const [msg, setMsg] = useState("");
   const [fullLog, setFullLog] = useState(log);
   const [showRaw, setShowRaw] = useState(false);
+  const [mapType, setMapType] = useState("dark");
+
+  const MAP_LAYERS = {
+    dark: {
+      url: "https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png",
+      attr: '&copy; <a href="https://carto.com/">CARTO</a>'
+    },
+    satellite: {
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      attr: "Esri, Maxar, Earthstar Geographics"
+    },
+    streets: {
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    },
+    terrain: {
+      url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      attr: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -298,18 +318,34 @@ export default function DetailModal({ log, onClose, onBlocked }) {
 
               {/* Mini embedded map */}
               {hasCoords ? (
-                <div className="rounded-xl overflow-hidden border border-cyber-border" style={{ height: "220px" }}>
+                <div className="relative rounded-xl overflow-hidden border border-cyber-border" style={{ height: "240px" }}>
+                  {/* Map Type Switcher */}
+                  <div className="absolute top-2 right-2 z-[1000] flex gap-1 bg-black/60 backdrop-blur-md p-1 rounded-lg border border-white/10">
+                    {Object.keys(MAP_LAYERS).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setMapType(t)}
+                        className={`text-[10px] px-2 py-1 rounded capitalize transition-all ${
+                          mapType === t ? "bg-cyber-accent text-black font-bold" : "text-white/60 hover:text-white"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+
                   <MapContainer
+                    key={`${L._id}-${mapType}`} // Remount on log change or type change
                     center={[L.lat, L.lon]}
-                    zoom={11}
+                    zoom={12}
                     className="h-full w-full"
                     scrollWheelZoom={false}
-                    zoomControl={true}
+                    zoomControl={false}
                     dragging={true}
                   >
                     <TileLayer
-                      attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                      url="https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png"
+                      attribution={MAP_LAYERS[mapType].attr}
+                      url={MAP_LAYERS[mapType].url}
                     />
                     <CircleMarker
                       center={[L.lat, L.lon]}
