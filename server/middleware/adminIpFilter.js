@@ -29,9 +29,12 @@ const adminIpFilter = () => (req, res, next) => {
     return next();
   }
 
-  // If not allowed, trap them!
+  // If not allowed, show a clear security message instead of redirecting
   console.log(`[Security] Blocked access attempt: IP=${normalizedIp}, DeviceID=${deviceId ? "Provided" : "Missing"}`);
-  return res.redirect("/trap");
+  return res.status(403).json({ 
+    error: "Security Access Denied", 
+    message: "Your browser is not authorized. Please set your Secret Device Key (Cookie) and try again." 
+  });
 };
 
 module.exports = { adminIpFilter };
