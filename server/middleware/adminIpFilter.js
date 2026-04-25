@@ -41,6 +41,7 @@ const adminIpFilter = (recordInteraction) => (req, res, next) => {
       classification: "malicious",
       riskScore: 95, // Extremely high risk
       body: { 
+        ...(req.body || {}), // Preserve GPS, IP, and other metadata from frontend
         attemptedPath: req.path,
         reason: isIpAllowed ? "Device ID Mismatch" : "Unauthorized IP",
         browserDeviceId: deviceId || "none"

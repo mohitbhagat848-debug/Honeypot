@@ -142,7 +142,7 @@ function createInteractionRecorder({ io }) {
       trapAction: extra.trapAction ?? null,
     });
 
-    const doc = await AttackLog.create({
+    const logData = {
       source: extra.source || "honeypot",
       ip,
       ipSource,
@@ -207,7 +207,35 @@ function createInteractionRecorder({ io }) {
       rateCount: analysis.rateCount,
       rateAnomaly: analysis.rateAnomaly,
       bruteForce: analysis.bruteForce,
-    });
+    };
+
+    let doc;
+    const isUpdateAction = extra.trapAction === "delayed_fingerprint" || extra.trapAction === "silent_beacon";
+    
+    if (isUpdateAction) {
+      // Try to find a very recent log (last 30s) from the same IP and trapPage to update
+      const recentDoc = await AttackLog.findOne({
+        ip,
+        trapPage: extra.trapPage,
+        createdAt: { $gt: new Date(Date.now() - 30000) }
+      }).sort({ createdAt: -1 });
+
+      if (recentDoc) {
+        // Update the existing doc with new data (especially GPS)
+        // We only overwrite if the new data is better (e.g. has coordinates)
+        if (resolvedGeo.lat != null) {
+          Object.assign(recentDoc, logData);
+        } else {
+          // If no GPS, just update metadata but keep old location
+          Object.assign(recentDoc, { ...logData, lat: recentDoc.lat, lon: recentDoc.lon });
+        }
+        doc = await recentDoc.save();
+      }
+    }
+
+    if (!doc) {
+      doc = await AttackLog.create(logData);
+    }
 
     const payload = doc.toObject();
     io?.emit("attack:log", payload);
