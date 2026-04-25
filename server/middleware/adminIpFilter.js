@@ -2,6 +2,11 @@ const ADMIN_ALLOWED_IPS = (process.env.ADMIN_ALLOWED_IPS || "127.0.0.1,::1").spl
 const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY;
 
 const adminIpFilter = () => (req, res, next) => {
+  // Always allow the setup-key route so the user can authorize themselves
+  if (req.path === "/setup-key" || req.path === "/api/auth/setup-key") {
+    return next();
+  }
+
   const clientIp =
     req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
     req.socket.remoteAddress ||
